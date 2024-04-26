@@ -123,16 +123,18 @@ print("The Accuracy for Training Set is {}".format(train_acc*100))
 
 #5
 import pandas as pd
-from sklearn.tree import DecisionTreeClassifier, export_text
-
-df = pd.read_csv('/content/sample_data/id.csv')
-df.fillna(method='ffill', inplace=True)
-df = pd.get_dummies(df, columns=['Outlook', 'Temperature', 'Humidity', 'Wind'])
-X = df.drop(columns=['Play'])
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import matplotlib.pyplot as plt
+df = pd.read_csv("/content/sample_data/id3.csv")
+X = pd.get_dummies(df[['Outlook', 'Temperature', 'Humidity', 'Wind']])
 y = df['Play']
+clf = DecisionTreeClassifier().fit(X, y)
 
-model = DecisionTreeClassifier()
-model.fit(X, y)
 
-tree_rules = export_text(model, feature_names=list(X.columns))
-print(tree_rules)
+##new block
+plt.figure(figsize=(20,10))
+plot_tree(clf, feature_names=list(X.columns), class_names=clf.classes_, filled=True, rounded=True)
+plt.show()
+sample = pd.DataFrame({'Outlook': ['sunny'], 'Temperature': ['cool'], 'Humidity': ['high'], 'Wind': ['weak']})
+sample_encoded = pd.get_dummies(sample.reindex(columns=X.columns, fill_value=0))
+print("Prediction for sample:", clf.predict(sample_encoded))
